@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.restlabs.data.vo.v1.PersonVO;
+import br.com.restlabs.data.vo.v2.PersonVOV2;
 import br.com.restlabs.exceptions.ResourceNotFoundException;
 import br.com.restlabs.mapper.dozerMapper;
+import br.com.restlabs.mapper.custom.PersonMapper;
 import br.com.restlabs.models.Person;
 import br.com.restlabs.repositories.PersonRepository;
 
@@ -19,6 +21,9 @@ public class PersonServices {
 
 	@Autowired
 	PersonRepository repository;
+	
+	@Autowired
+	PersonMapper personMapper;
 
 	public List<PersonVO> findAll() {
 		logger.info("Return all person");
@@ -34,8 +39,14 @@ public class PersonServices {
 
 	public PersonVO PostPerson(PersonVO person) {
 		var entity = dozerMapper.parserObject(person, Person.class);
+		var vo =  dozerMapper.parserObject(repository.save(entity), PersonVO.class);
+		return vo;
 		
-		PersonVO vo =  dozerMapper.parserObject(repository.save(entity), PersonVO.class);
+	}
+	
+	public PersonVOV2 PostPersonV2(PersonVOV2 person) {
+		var entity = personMapper.convertVoToEntity(person);
+		var vo =  personMapper.convertEntityToVo(repository.save(entity));
 		return vo;
 		
 	}
