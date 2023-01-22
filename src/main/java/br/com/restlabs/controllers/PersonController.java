@@ -20,39 +20,43 @@ import br.com.restlabs.data.vo.v2.PersonVOV2;
 import br.com.restlabs.services.PersonServices;
 
 @RestController
-@RequestMapping("/person")
+@RequestMapping("/person/v1")
 public class PersonController {
 	
 	@Autowired
 	private PersonServices service;
 	
-	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE )
+	@GetMapping(produces = {
+			MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE	} )
 	public List<PersonVO> findAll() throws Exception {
 		return service.findAll() ;
 	}	
 	
 	@GetMapping(
 			value = "/{id}",
-			produces = MediaType.APPLICATION_JSON_VALUE )
+			produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE} )
 	public PersonVO findById(
 			@PathVariable(value = "id") Long id) throws Exception {
 		return service.findById(id) ;
 	}
 	
-	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
-			produces = MediaType.APPLICATION_JSON_VALUE )
+	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+			     produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE} )
 	public PersonVO CreatePerson(	@RequestBody PersonVO Person) throws Exception {
 		return service.PostPerson(Person) ;
 	}
 	
-	@PostMapping(value= "/v2",consumes = MediaType.APPLICATION_JSON_VALUE,
-			produces = MediaType.APPLICATION_JSON_VALUE )
+	@PostMapping(
+			value= "/v2",
+			consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+			produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	public PersonVOV2 CreatePersonv2(@RequestBody PersonVOV2 Person) throws Exception {
 		return service.PostPersonV2(Person) ;
 	}
 	
-	@PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
-			produces = MediaType.APPLICATION_JSON_VALUE )
+	@PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+			produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE} )
 	public PersonVO PersonUpdate(
 			@RequestBody PersonVO Person) throws Exception {
 		return service.UpdatePerson(Person);
