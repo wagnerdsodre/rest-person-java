@@ -3,8 +3,11 @@ package br.com.restlabs.services;
 import java.util.List;
 import java.util.logging.Logger;
 
+import br.com.restlabs.controllers.PersonController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import br.com.restlabs.data.vo.v1.PersonVO;
 import br.com.restlabs.data.vo.v2.PersonVOV2;
@@ -30,11 +33,13 @@ public class PersonServices {
 		return dozerMapper.parserListObject(repository.findAll(), PersonVO.class);
 	}
 
-	public PersonVO findById(Long id) {
+	public PersonVO findById(Long id) throws Exception {
 		logger.info("Return person");				
 		var entity = repository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Sorry, no records for this Id"));
-	    return dozerMapper.parserObject(entity, PersonVO.class);
+	    PersonVO vo =  dozerMapper.parserObject(entity, PersonVO.class);
+		vo.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
+		return vo;
 	}
 
 	public PersonVO PostPerson(PersonVO person) {
@@ -53,7 +58,7 @@ public class PersonServices {
 
 	public PersonVO UpdatePerson(PersonVO person) {
 		logger.info("Updated person");
-		var entity = repository.findById(person.getId())
+		var entity = repository.findById(person.getKey())
 				.orElseThrow(() -> new ResourceNotFoundException("Sorry, no records for this Id"));
 
 		entity.setFirstName(person.getFirstName());
